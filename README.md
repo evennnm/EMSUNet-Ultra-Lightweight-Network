@@ -22,7 +22,7 @@ pip install -r requirements.txt
 ## Quantitative Results:
 
 <p align="center">
-<img src="images/Visualization_fig.PNG" width=100% height=30% 
+<img src="images/Visualization_fig.png" width=100% height=30% 
 class="center">
 </p>
 <p align="center">
