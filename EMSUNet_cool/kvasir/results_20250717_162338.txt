@@ -1,0 +1,17 @@
+Training Data: C:\data_set\kvasir-seg//
+Test Data: D:\data_set\CVC\TestDataset\CVC-ClinicDB/
+Model: results\best_model_20250717_162338.pth
+
+== Training Set Metrics ==
+Dice Coefficient: 0.9308
+mIoU: 0.8706
+Precision: 0.9316
+Recall: 0.9300
+Accuracy: 0.9784
+
+== Test Set Metrics ==
+Dice Coefficient: 0.9319
+mIoU: 0.8724
+Precision: 0.9310
+Recall: 0.9327
+Accuracy: 0.9813

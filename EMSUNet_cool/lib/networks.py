@@ -1,0 +1,128 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from lib.hqq_encoder import encoder_EMSUnet
+from lib.pvtv2 import pvt_v2_b0, pvt_v2_b1, pvt_v2_b2
+from lib.resnet import resnet18, resnet34, resnet50, resnet101, resnet152
+from lib.decoders import decoder_EMSUnet
+import os
+os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
+from transformers import MobileViTModel
+
+class MViTxxsEncoderPretrained(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.encoder = MobileViTModel.from_pretrained(
+            "apple/mobilevit-xx-small"
+        ).base_model
+
+    def forward(self, x):
+        raw_input = x.clone()
+        hidden_states = self.encoder.forward(x, output_hidden_states=True).hidden_states
+        out_dict = {"raw_input": raw_input, "hidden_states": hidden_states}
+        return out_dict
+
+class EMSUNet(nn.Module):
+    def __init__(self, num_classes=1, kernel_sizes=[3,5,7], expansion_factor=2, activation='relu', encoder='encoder_EMSUnet', pretrain=True):
+        super(EMSUNet, self).__init__()
+
+        self.conv = nn.Sequential(
+            nn.Conv2d(1, 3, kernel_size=1),
+            nn.BatchNorm2d(3),
+            nn.ReLU(inplace=True)
+        )
+        # backbone
+        if encoder == 'pvt_v2_b0':
+            self.backbone = pvt_v2_b0()
+            path = './pretrained_pth/pvt/pvt_v2_b0.pth'
+            channels=[256, 160, 64, 32]
+        elif encoder == 'encoder_EMSUnet':
+            self.backbone = encoder_EMSUnet()
+            channels=[256, 160, 64, 32]
+        elif encoder == 'mobilevit':
+            self.backbone = MViTxxsEncoderPretrained()
+            channels=[256, 160, 64, 32]
+        elif encoder == 'pvt_v2_b1':
+            self.backbone = pvt_v2_b1()
+            path = './pretrained_pth/pvt/pvt_v2_b1.pth'
+            channels=[512, 320, 128, 64]
+        elif encoder == 'resnet18':
+            self.backbone = resnet18(pretrained=pretrain)
+            channels=[512, 256, 128, 64]
+        elif encoder == 'resnet34':
+            self.backbone = resnet34(pretrained=pretrain)
+            channels=[512, 256, 128, 64]
+        elif encoder == 'resnet50':
+            self.backbone = resnet50(pretrained=pretrain)
+            channels=[2048, 1024, 512, 256]
+        elif encoder == 'resnet101':
+            self.backbone = resnet101(pretrained=pretrain)  
+            channels=[2048, 1024, 512, 256]
+        elif encoder == 'resnet152':
+            self.backbone = resnet152(pretrained=pretrain)  
+            channels=[2048, 1024, 512, 256]
+        else:
+            print('Encoder not implemented! Continuing with default encoder pvt_v2_b2.')
+            self.backbone = pvt_v2_b2()  
+            path = './pretrained_pth/pvt/pvt_v2_b2.pth'
+            channels=[512, 320, 128, 64]
+            
+        if pretrain==True and 'pvt_v2' in encoder:
+            save_model = torch.load(path)
+            model_dict = self.backbone.state_dict()
+            state_dict = {k: v for k, v in save_model.items() if k in model_dict.keys()}
+            model_dict.update(state_dict)
+            self.backbone.load_state_dict(model_dict)
+        
+        print('Model %s created, param count: %d' %
+                     (encoder+' backbone: ', sum([m.numel() for m in self.backbone.parameters()])))
+
+        self.decoder = decoder_EMSUnet(channels=channels, kernel_sizes=kernel_sizes, expansion_factor=expansion_factor,  activation=activation)
+        
+        print('Model %s created, param count: %d' %
+                     (' decoder: ', sum([m.numel() for m in self.decoder.parameters()])))
+             
+        self.out_head4 = nn.Conv2d(channels[0], num_classes, 1)
+        self.out_head3 = nn.Conv2d(channels[1], num_classes, 1)
+        self.out_head2 = nn.Conv2d(channels[2], num_classes, 1)
+        self.out_head1 = nn.Conv2d(channels[3], num_classes, 1)
+
+    def forward_features(self, x):
+        """A method specifically designed for extracting multi-stage features"""
+        if x.size()[1] == 1:
+            x = self.conv(x)
+        x1, x2, x3, x4 = self.backbone(x)
+        return [x1, x2, x3, x4]
+
+    def forward(self, x, mode='test'):
+        
+        # if grayscale input, convert to 3 channels
+
+        # encoder
+        features = self.forward_features(x)
+        x1, x2, x3, x4 = features
+
+
+        # decoder
+        dec_outs = self.decoder(x4, [x3, x2, x1])
+        
+        # prediction heads  
+        p4 = self.out_head4(dec_outs[0])
+        p3 = self.out_head3(dec_outs[1])
+        p2 = self.out_head2(dec_outs[2])
+        p1 = self.out_head1(dec_outs[3])
+
+        p4 = F.interpolate(p4, scale_factor=32, mode='bilinear')
+        p3 = F.interpolate(p3, scale_factor=16, mode='bilinear')
+        p2 = F.interpolate(p2, scale_factor=8, mode='bilinear')
+        p1 = F.interpolate(p1, scale_factor=4, mode='bilinear')
+
+        if mode == 'test':
+            return [p4, p3, p2, p1]
+        
+        return [p4, p3, p2, p1]
+               
+
+
+
+

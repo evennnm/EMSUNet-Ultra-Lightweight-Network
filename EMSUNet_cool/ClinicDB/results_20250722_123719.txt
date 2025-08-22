@@ -1,0 +1,19 @@
+Training Data: C:\data_set\CVC\CVC-ClinicDB_train/ 
+Test Data: C:\data_set\CVC\TestDataset\CVC-ClinicDB/
+Model: results\best_model_20250722_123719.pth
+
+== Training Set Metrics ==
+Dice Coefficient: 0.9541
+mIoU: 0.9122
+Precision: 0.9538
+Recall: 0.9544
+Accuracy: 0.9915
+
+== Test Set Metrics ==
+Dice Coefficient: 0.9431
+mIoU: 0.8923
+Precision: 0.9350
+Recall: 0.9513
+Accuracy: 0.9908
+
+
