@@ -12,12 +12,17 @@ class="center">
 Colorectal cancer prevalence necessitates efficient polyp detection and removal, yet current high-precision segmentation methods suffer from computational complexity while lightweight models sacrifice accuracy.Given the critical need for computational efficiency in medical image segmentation, this paper introduces an innovative S-M-C-A concept (Channel Split, Dimension Elevation, Multi-Scale DWConv, Attention, Dimension Reduction). This method exploits channel redundancy to transform single-scale depthwise convolution into multi-scale through splitting, thereby learning diverse multi-scale features to enhance performance. It also employs attention mechanisms to weight scales, thereby boosting representational capacity while minimizing the number of required layers. The SMCA approach concurrently improves performance and reduces parameter count.Building on the SMCA framework, we propose EMSUet for real-time polyp segmentation. Its superior computational efficiency surpasses that of all recent polyp segmentation models.The base model presented in this paper is structurally optimized for polyp segmentation tasks, attaining a Dice score of 93.19\%, which is remarkably close to the state-of-the-art (SOTA) performance on the Kvasir dataset. EMSUNet effectively resolves the "lightweight-accuracy" paradox, delivering a lightweight solution (1.3 GFlops), high accuracy (94.1\% Dice on CVC-ClinicDB), and real-time performance (300 fps on RTX 4060).
 ## Usage:
 ### Recommended environment:
+**Please run the following commands.**
+```
 conda create -n EMSUNet python=3.8
 conda activate EMSUNet
 
 pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0 --extra-index-url https://download.pytorch.org/whl/cu113
 
 pip install -r requirements.txt
+
+```
+
 
 ## Quantitative Results:
 
