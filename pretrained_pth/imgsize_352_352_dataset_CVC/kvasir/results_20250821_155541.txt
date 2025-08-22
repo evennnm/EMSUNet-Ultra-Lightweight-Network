@@ -1,0 +1,26 @@
+Training Data: C:\data_set\CVC\kvasir-seg_train/
+Test Data: C:\data_set\CVC\TestDataset\Kvasir/
+Model: results\best_model_20250821_155541.pth
+
+== Training Set Metrics ==
+Dice Coefficient: 0.9254
+mIoU: 0.8611
+Precision: 0.9235
+Recall: 0.9273
+Accuracy: 0.9769
+
+== Test Set Metrics ==
+Dice Coefficient: 0.9164
+mIoU: 0.8457
+Precision: 0.9276
+Recall: 0.9055
+Accuracy: 0.9752
+
+== Test _kvasir Set Metrics ==
+Dice Coefficient: 0.9164
+mIoU: 0.8457
+Precision: 0.9276
+Recall: 0.9055
+Accuracy: 0.9752
+test_fps: 334.7505
+
