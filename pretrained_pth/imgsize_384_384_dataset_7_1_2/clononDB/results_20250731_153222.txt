@@ -1,0 +1,24 @@
+Training Data: C:\data_set\CVC-ColonDB/ 
+Test Data: D:\data_set\CVC\TestDataset\CVC-ClinicDB/
+Model: results\best_model_20250731_153222.pth
+
+== Training Set Metrics ==
+Dice Coefficient: 0.9224
+mIoU: 0.8560
+Precision: 0.9141
+Recall: 0.9308
+Accuracy: 0.9891
+
+== Validation Set Metrics ==
+Dice Coefficient: 0.9131
+mIoU: 0.8401
+Precision: 0.9101
+Recall: 0.9161
+Accuracy: 0.9833
+
+== Test Set Metrics ==
+Dice Coefficient: 0.9179
+mIoU: 0.8483
+Precision: 0.9247
+Recall: 0.9112
+Accuracy: 0.9868
