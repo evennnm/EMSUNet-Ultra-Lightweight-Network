@@ -48,7 +48,7 @@ class="center">
 - [Google Drive Link (399.5MB)](https://drive.google.com/file/d/1YiGHLw4iTvKdvbT6MgwO9zcCv8zJ_Bnb/view?usp=sharing). It contains two sub-datasets: Kvasir-SEG (900 train samples) and CVC-ClinicDB (550 train samples).
 
 ## Pretrained model:
-All the pre-trained models in this paper have been packaged together with the code, and the weights and logs have been placed in the `pretrained_pth` folder.The code and weights for the customized model, along with the architecture diagram, are placed in the `EMSUNet_cool` folder.
+All the pre-trained models in this paper have been packaged together with the code, and the weights and results have been placed in the `pretrained_pth` folder.The code, weights, logs, and architecture diagram for the customized model are placed in the `EMSUNet_cool` folder..
 
 
 ## Acknowledgement:
